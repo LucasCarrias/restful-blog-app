@@ -1,6 +1,7 @@
 const express = require('express'),
       mongoose = require('mongoose'),
       bodyParser = require('body-parser'),
+      expressSanitizer = require('express-sanitizer'),
       methodOverride = require('method-override');
 
 var app = express();
@@ -20,13 +21,14 @@ mongoose.connect("mongodb://localhost:2717/blog_app", {
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended:true}));
-app.use(methodOverride("_method"))
+app.use(methodOverride("_method"));
+app.use(expressSanitizer());
 
 //Schema, Model
 var blogSchema = mongoose.Schema({
-    title: String,
-    image: String,
-    body: String,
+    title: {type:String, required: true},
+    image: {type:String, required: true},
+    body: {type:String, required: true},
     created: {type: Date, default: Date.now}
 });
 var Blog = mongoose.model("Blog", blogSchema);
@@ -55,6 +57,7 @@ app.get("/blogs/new", (req, res)=>{
 });
 
 app.post("/blogs", (req, res)=> {
+    req.body.blog.blog = req.sanitize(req.body.blog.blog);
     Blog.create(req.body.blog, (err, blog) =>{
         if(err)
             console.log(err);
