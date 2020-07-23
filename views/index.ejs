@@ -8,7 +8,8 @@
         <img class="" src="<%= blog.image %>" alt="">
         <br>
         <span> <%= blog.created %></span>
-        <p><%= blog.body %></p> 
+        <p><%= blog.body.substring(0, 100) %>...</p>
+        <a href="/blogs/<%= blog._id %>">Read more.</a>
     </div>
     
 <%}) %>
